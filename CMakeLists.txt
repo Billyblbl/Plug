@@ -59,7 +59,7 @@ else(STATIC_LIB)
 	set(LIB_TYPE SHARED)
 endif(STATIC_LIB)
 
-message(STATUS "building as "${LIB_TYPE})
+message(STATUS "building as " ${LIB_TYPE})
 
 get_include(PLUG_INCLUDE .)
 get_src(PLUG_SRC .)

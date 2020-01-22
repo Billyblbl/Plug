@@ -9,11 +9,12 @@
 #define DYNLIB_HPP_
 
 #include <functional>
+#include <iostream>
 
 
 	#if defined(_WIN32)	//Windows
 
-		#include <windows.h> 
+		#include <windows.h>
 
 namespace Plug
 {
@@ -62,7 +63,9 @@ namespace Plug
 			{
 				using Functional = std::function<Callable>;
 				using FctPtr = FunctionalTarget<Callable>;
-				dlerror();
+				auto	*prevErr = dlerror();
+				if (prevErr != nullptr)
+					std::cerr << "Warn: when loading call to \"" << key << "\", detected previous unhandled error: " << prevErr << '\n';
 				auto	*thing = dlsym(_handle.get(), key.c_str());
 				auto	*err = dlerror();
 				if (err != nullptr)
@@ -77,7 +80,9 @@ namespace Plug
 			{
 				using Functional = std::function<Callable>;
 				using FctPtr = FunctionalTarget<Callable>;
-				dlerror();
+				auto	*prevErr = dlerror();
+				if (prevErr != nullptr)
+					std::cerr << "Warn: when loading function pointer to \"" << key << "\", detected previous unhandled error: " << prevErr << '\n';
 				auto	*thing = dlsym(_handle.get(), key.c_str());
 				auto	*err = dlerror();
 				if (err != nullptr)
