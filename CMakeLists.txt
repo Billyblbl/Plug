@@ -63,8 +63,8 @@ message(STATUS "building as " ${LIB_TYPE})
 
 get_include(PLUG_INCLUDE .)
 get_src(PLUG_SRC .)
-include_directories(${PLUG_INCLUDE})
 add_library(${PROJECT_NAME} ${LIB_TYPE} ${PLUG_SRC})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PLUG_INCLUDE})
 target_link_libraries(${PROJECT_NAME} ${LDLIB})
 
 
