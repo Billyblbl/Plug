@@ -51,6 +51,10 @@ namespace Plug
 namespace Plug
 {
 
+	///
+	///@brief Dynamic library wrapper
+	///
+	///
 	class DynLib {
 		public:
 
@@ -58,15 +62,27 @@ namespace Plug
 
 			~DynLib() = default;
 
+			///
+			///@brief Calls a function in the library
+			///
+			/// Calls the function associated with symbol, forwarding it args
+			/// using Callable as its signature
+			///
+			///@tparam Callable Function signature
+			///@tparam Args Arguments types
+			///@param symbol Symbol of the function
+			///@param args Arduments forwarded to the function
+			///@return auto Return of the called function
+			///
 			template<typename Callable, typename... Args>
-			auto	call(const std::string &key, Args&&... args)
+			auto	call(const std::string &symbol, Args&&... args)
 			{
 				using Functional = std::function<Callable>;
 				using FctPtr = FunctionalTarget<Callable>;
 				auto	*prevErr = dlerror();
 				if (prevErr != nullptr)
-					std::cerr << "Warn: when loading call to \"" << key << "\", detected previous unhandled error: " << prevErr << '\n';
-				auto	*thing = dlsym(_handle.get(), key.c_str());
+					std::cerr << "Warn: when loading call to \"" << symbol << "\", detected previous unhandled error: " << prevErr << '\n';
+				auto	*thing = dlsym(_handle.get(), symbol.c_str());
 				auto	*err = dlerror();
 				if (err != nullptr)
 					throw std::runtime_error(std::string(__func__) + " : " + err);
@@ -76,14 +92,14 @@ namespace Plug
 
 			//UNIX only
 			template<typename Callable>
-			auto	get(const std::string &key)
+			auto	get(const std::string &symbol)
 			{
 				using Functional = std::function<Callable>;
 				using FctPtr = FunctionalTarget<Callable>;
 				auto	*prevErr = dlerror();
 				if (prevErr != nullptr)
-					std::cerr << "Warn: when loading function pointer to \"" << key << "\", detected previous unhandled error: " << prevErr << '\n';
-				auto	*thing = dlsym(_handle.get(), key.c_str());
+					std::cerr << "Warn: when loading function pointer to \"" << symbol << "\", detected previous unhandled error: " << prevErr << '\n';
+				auto	*thing = dlsym(_handle.get(), symbol.c_str());
 				auto	*err = dlerror();
 				if (err != nullptr)
 					throw std::runtime_error(std::string(__func__) + " : " + err);
