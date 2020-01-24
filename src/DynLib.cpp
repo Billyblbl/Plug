@@ -5,6 +5,7 @@
 ** DynLib
 */
 
+#include <iostream>
 #include "DynLib.hpp"
 
 #if defined(_WIN32)
@@ -14,13 +15,13 @@ Plug::DynLib::DynLib(const std::string &path):
 	_handle{LoadLibrary(path.c_str())}
 {
 	if (_handle == NULL)
-		throw std::runtime_error(std::string(__func__) + " : " + GetLastError());
+		throw std::runtime_error(std::string(__func__) + " : " + (char *)GetLastError());
 }
 
 Plug::DynLib::~DynLib()
 {
 	if (_handle != NULL && FreeLibrary(_handle) == 0)
-		throw std::runtime_error(std::string("FreeLibrary : ") + GetLastError());
+		std::cerr << "FreeLibrary : " << (char *)GetLastError() << '\n';
 }
 
 #else

@@ -27,10 +27,13 @@ namespace Plug
 			template<typename Callable = long(), typename... Args>
 			auto	call(const std::string &key, Args&&... args)
 			{
-				auto	thing = GetProcAddress(_handle, key);
+				using Functional = std::function<Callable>;
+				using FctPtr = FunctionalTarget<Callable>;
+				auto	thing = GetProcAddress(_handle, key.c_str());
 				if (thing == NULL)
-					throw std::runtime_error(std::string(__func__) + " : " + GetLastError());
-				return std::function<Callable>(thing)(std::forward<Args>(args)...);
+					throw std::runtime_error(std::string(__func__) + " : " + (char *)GetLastError());
+				Functional	callable(reinterpret_cast<FctPtr>(thing));
+				return callable(std::forward<Args>(args)...);
 			}
 
 			~DynLib();
@@ -38,6 +41,23 @@ namespace Plug
 		protected:
 		private:
 
+			template<typename T>
+			struct FunctionalTraits {};
+
+			template<typename R, typename... Args>
+			struct FunctionalTraits<std::function<R(Args...)>> {
+				using resultType = R;
+				using signature = R(*)(Args...);
+				struct argumentTypes {
+					using asTuple = std::tuple<Args...>;
+
+					template<size_t index>
+					using arg = std::tuple_element_t<index, asTuple>;
+				};
+			};
+
+			template<typename Callable>
+			using FunctionalTarget = typename FunctionalTraits<std::function<Callable>>::signature;
 
 		HINSTANCE	_handle;
 
