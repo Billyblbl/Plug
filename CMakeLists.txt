@@ -52,12 +52,15 @@ endfunction(get_src)
 #PLUG
 message(STATUS "Configuring Plug build")
 
-option(STATIC_LIB "Library compilation mode")
-if (STATIC_LIB)
-	set(LIB_TYPE STATIC)
-else(STATIC_LIB)
-	set(LIB_TYPE SHARED)
-endif(STATIC_LIB)
+# option(STATIC_LIB "Library compilation mode")
+# if (STATIC_LIB)
+# 	set(LIB_TYPE STATIC)
+# else(STATIC_LIB)
+# 	set(LIB_TYPE SHARED)
+# endif(STATIC_LIB)
+
+set(LIB_TYPE STATIC)
+
 
 message(STATUS "building as " ${LIB_TYPE})
 
