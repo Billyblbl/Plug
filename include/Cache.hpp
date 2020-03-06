@@ -12,6 +12,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <type_traits>
 
 namespace Plug {
 
@@ -23,7 +24,7 @@ namespace Plug {
     ///
     ///@tparam element type of element cached
     ///
-    template<typename element>
+    template<typename Element>
     class Cache {
         public:
 
@@ -49,13 +50,13 @@ namespace Plug {
             ///@brief Owning participant Pointer type to a loaded element
             ///
             ///
-            using ElementPtr = std::shared_ptr<element>;
+            using ElementPtr = std::shared_ptr<Element>;
 
             ///
             ///@brief element Entry referencing a previously loaded element
             ///
             ///
-            using ElementEntry = std::weak_ptr<element>;
+            using ElementEntry = std::weak_ptr<Element>;
 
             ///
             ///@brief Internal map type
@@ -195,21 +196,23 @@ namespace Plug {
             ///
             /// Loads from construction arguments
             ///
+            ///@tparam ElementType Type of the elemnt in the cache. must be Element or derived from Element. Default to Element
             ///@tparam Args Construction argument types
             ///@param uniqueKey Key associated with the element to load
             ///@param args Construction arguments
             ///@return ElementPtr desired element
             ///
-            template<typename... Args>
+            template<typename ElementType = Element, typename... Args>
             ElementPtr       load(const ElementKey &uniqueKey, Args&&... args)
             {
+                static_assert(std::is_base_of_v<Element, ElementType>, "ElementType must be Element or derived from Element");
                 auto it = _elements.find(uniqueKey);
                 if (it != _elements.end()) {
                     auto element = it.second.lock();
                     if (element)
                         return element;
                 }
-                auto element = std::make_shared<element>(args);
+                auto element = std::make_shared<ElementType>(args);
                 _elements[uniqueKey] = element;
                 return element;
             }
@@ -219,18 +222,21 @@ namespace Plug {
             ///
             /// Loads from the key itself
             ///
+            ///@tparam ElementType Type of the elemnt in the cache. must be Element or derived from Element. Default to Element
             ///@param uniqueKey Key associated with the element to load
             ///@return ElementPtr desired element
             ///
+            template<typename ElementType = Element>
             ElementPtr       load(const ElementKey &uniqueKey)
             {
+                static_assert(std::is_base_of_v<Element, ElementType>, "ElementType must be Element or derived from Element");
                 auto it = _elements.find(uniqueKey);
                 if (it != _elements.end()) {
                     auto element = it.second.lock();
                     if (element)
                         return element;
                 }
-                auto element = std::make_shared<element>(uniqueKey);
+                auto element = std::make_shared<Element>(uniqueKey);
                 _elements[uniqueKey] = element;
                 return element;
             }

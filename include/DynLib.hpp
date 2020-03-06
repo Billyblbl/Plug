@@ -84,7 +84,7 @@ namespace Plug
 			decltype(auto)	getFctSymbol(const std::string &symbol)
 			{
 				using Functional = std::function<Callable>;
-				using FctPtr = R(*)(Args...);
+				using FctPtr = FunctionalTarget<Callable>;
 			#if defined(_WIN32)
 				auto	thing = GetProcAddress(_handle, key.c_str());
 				if (thing == NULL)
