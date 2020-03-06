@@ -16,20 +16,62 @@
 
 namespace Plug {
 
+    ///
+    ///@brief Wrapper for module models in which the business code is an object created by the module library
+    ///
+    ///@tparam Interface Interface of the module model
+    ///
     template<typename Interface>
     class ObjectModule {
         public:
 
+            ///
+            ///@brief Object type
+            ///
+            ///
             using Object = Interface;
 
+            ///
+            ///@brief Object creator function wrapper type
+            ///
+            ///
             using ObjectCreator = std::function<Object*()>;
+
+            ///
+            ///@brief Object destructor function wrapper type
+            ///
+            ///
             using ObjectDestructor = std::function<void(Object *)>;
 
+            ///
+            ///@brief Object internal owning pointer type
+            ///
+            ///
             using ObjectPtr = std::unique_obj<Object, ObjectDestructor>;
+
+            ///
+            ///@brief Object internal owning pointer type
+            ///
+            ///
             using ModulePtr = typename decltype(Modules::Raw())::ElementPtr;
 
+            ///
+            ///@brief Cache type for object module models
+            ///
+            ///
+            using CacheType = Cache<ObjectModule>;
+
+            ///
+            ///@brief Construct a new Object Module
+            ///
+            ///
             ObjectModule() = default;
 
+            ///
+            ///@brief Construct a new Object Module
+            ///
+            ///@param path Path to the module's dynamic library file
+            ///
             ObjectModule(const std::string &path):
                 _mod(Modules::Raw().load(path))
                 _obj(
@@ -40,6 +82,10 @@ namespace Plug {
                 )
             {}
 
+            ///
+            ///@brief Destroy the Object Module
+            ///
+            ///
             ~ObjectModule() = default;
 
     		///
@@ -103,10 +149,23 @@ namespace Plug {
             ObjectPtr   _obj;
     };
 
+    ///
+    ///@brief Cache type for object module models of object type Interface
+    ///
+    ///@tparam Interface interface of the object type managed by the cache
+    ///
+    template<typename Interface>
+    using ObjectCache = typename ObjectModule<Interface>::CacheType;
+
     namespace Modules {
 
+        ///
+        ///@brief Global cache access template for Object module models
+        ///
+        ///@tparam Interface Interface of the module model
+        ///
         template<typename Interface>
-        Cache<ObjectModule<Interface>>  &Objects()
+        ObjectCache<Interface>  &Objects()
         {
             static Cache<ObjectModule<Interface>>   objs;
             return objs;

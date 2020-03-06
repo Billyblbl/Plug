@@ -12,6 +12,11 @@
 #include "DynLib.hpp"
 
 namespace Plug { namespace Modules {
+
+    ///
+    ///@brief Global cache access for raw dynlib modules
+    ///
+    ///
     Cache<DynLib>   &Raw();
 }} // namespace Plug
 
