@@ -80,10 +80,10 @@ namespace Plug
 				return *(reinterpret_cast<Ptr>(thing));
 			}
 
-			template<typename R, typename... Args>
-			decltype(auto)	getSymbol<R(Args...)>(const std::string &symbol)
+			template<typename Callable>
+			decltype(auto)	getFctSymbol(const std::string &symbol)
 			{
-				using Functional = std::function<R(Args...)>;
+				using Functional = std::function<Callable>;
 				using FctPtr = R(*)(Args...);
 			#if defined(_WIN32)
 				auto	thing = GetProcAddress(_handle, key.c_str());

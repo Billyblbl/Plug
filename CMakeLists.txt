@@ -11,63 +11,24 @@ elseif(WIN32)
 	set(LDLIB "")
 endif(UNIX)
 
-#SOURCE FETCHERS
-
-function(get_include LISTNAME)
-	set(get_include_dir_local "")
-	foreach(dir ${ARGN})
-		list(APPEND get_include_dir_local ${CMAKE_CURRENT_SOURCE_DIR}/${dir}/include)
-	endforeach(dir)
-	set(${LISTNAME} "${get_include_dir_local}" PARENT_SCOPE)
-	set(PROJECT_INCLUDE_DIRS ${PROJECT_INCLUDE_DIRS} ${get_include_dir_local} PARENT_SCOPE)
-endfunction(get_include)
-
-function(get_src LISTNAME)
-	# build list of globbing expression
-	set(get_src_dir_local "")
-	foreach(dir ${ARGN})
-		list(APPEND get_src_dir_local "${CMAKE_CURRENT_SOURCE_DIR}/${dir}/src/*.cpp")
-	endforeach(dir)
-
-	# build list of source files
-	set(get_src_local "")
-
-	foreach(src ${get_src_dir_local})
-
-		# get list of source for a globbing expression
-		file(GLOB get_src_globbed_local "${src}")
-
-		# add the globbed source files to the list
-		list(APPEND get_src_local "${get_src_globbed_local}")
-
-	endforeach(src)
-
-	# return the completed list of source files in ${LISTNAME}
-	set(${LISTNAME} "${get_src_local}" PARENT_SCOPE)
-
-endfunction(get_src)
-
-
-
 #PLUG
 message(STATUS "Configuring Plug build")
 
-# option(STATIC_LIB "Library compilation mode")
-# if (STATIC_LIB)
-# 	set(LIB_TYPE STATIC)
-# else(STATIC_LIB)
-# 	set(LIB_TYPE SHARED)
-# endif(STATIC_LIB)
+option(STATIC_LIB "Library compilation mode" OFF)
+if (STATIC_LIB)
+	set(LIB_TYPE STATIC)
+else(STATIC_LIB)
+	set(LIB_TYPE SHARED)
+endif(STATIC_LIB)
 
-set(LIB_TYPE STATIC)
-
+# set(LIB_TYPE STATIC)
 
 message(STATUS "building as " ${LIB_TYPE})
 
-get_include(PLUG_INCLUDE .)
-get_src(PLUG_SRC .)
+file(GLOB PLUG_SRC ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
+
 add_library(${PROJECT_NAME} ${LIB_TYPE} ${PLUG_SRC})
-target_include_directories(${PROJECT_NAME} PUBLIC ${PLUG_INCLUDE})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
 target_link_libraries(${PROJECT_NAME} ${LDLIB})
 
 
