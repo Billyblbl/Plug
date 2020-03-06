@@ -22,7 +22,7 @@ static std::wstring s2ws(const std::string& s)
 }
 
 Plug::DynLib::DynLib(const std::string &path):
-	_handle{LoadLibrary((LPCSTR)s2ws(path).c_str())}
+	_handle{LoadLibrary((LPCWSTR)s2ws(path).c_str())}
 {
 	if (_handle == NULL)
 		throw std::runtime_error(std::string(__func__) + " : " + (char *)GetLastError());
