@@ -11,6 +11,7 @@
 #if defined(_WIN32)
 //Windows
 
+#ifdef UNICODE
 static std::wstring s2ws(const std::string& s)
 {
     int len;
@@ -20,10 +21,17 @@ static std::wstring s2ws(const std::string& s)
     MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, &r[0], len);
     return r;
 }
+#endif
 
+#ifdef UNICODE
 Plug::DynLib::DynLib(const std::string &path):
 	_handle{LoadLibrary((LPCWSTR)s2ws(path).c_str())}
 {
+#else
+Plug::DynLib::DynLib(const std::string &path):
+	_handle{LoadLibrary((LPCSTR)path.c_str())}
+{
+#endif
 	if (_handle == NULL)
 		throw std::runtime_error(std::string(__func__) + " : " + (char *)GetLastError());
 }
