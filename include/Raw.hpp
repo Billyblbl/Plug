@@ -11,6 +11,8 @@
 #include "Cache.hpp"
 #include "DynLib.hpp"
 
+///@file
+
 namespace Plug { namespace Modules {
 
     ///
