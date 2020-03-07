@@ -1,5 +1,5 @@
-project(Plug)
 cmake_minimum_required(VERSION 3.12)
+project(Plug VERSION 0.1.0)
 add_definitions("-fPIC")
 
 set(CMAKE_CXX_STANDARD 17)
