@@ -200,10 +200,10 @@ namespace Plug {
             ///@tparam Args Construction argument types
             ///@param uniqueKey Key associated with the element to load
             ///@param args Construction arguments
-            ///@return ElementPtr desired element
+            ///@return std::shared_ptr<ElementType> desired element
             ///
             template<typename ElementType = Element, typename... Args>
-            ElementPtr       load(const ElementKey &uniqueKey, Args&&... args)
+            std::shared_ptr<ElementType>    load(const ElementKey &uniqueKey, Args&&... args)
             {
                 static_assert(std::is_base_of_v<Element, ElementType>, "ElementType must be Element or derived from Element");
                 auto it = _elements.find(uniqueKey);
@@ -224,10 +224,10 @@ namespace Plug {
             ///
             ///@tparam ElementType Type of the elemnt in the cache. must be Element or derived from Element. Default to Element
             ///@param uniqueKey Key associated with the element to load
-            ///@return ElementPtr desired element
+            ///@return std::shared_ptr<ElementType> desired element
             ///
             template<typename ElementType = Element>
-            ElementPtr       load(const ElementKey &uniqueKey)
+            std::shared_ptr<ElementType>    load(const ElementKey &uniqueKey)
             {
                 static_assert(std::is_base_of_v<Element, ElementType>, "ElementType must be Element or derived from Element");
                 auto it = _elements.find(uniqueKey);
@@ -236,7 +236,7 @@ namespace Plug {
                     if (element)
                         return element;
                 }
-                auto element = std::make_shared<Element>(uniqueKey);
+                auto element = std::make_shared<ElementType>(uniqueKey);
                 _elements[uniqueKey] = element;
                 return element;
             }
@@ -246,15 +246,16 @@ namespace Plug {
             ///
             /// Reloads the element associated with uniqueKey from construction arguments
             ///
+            ///@tparam Element Element type to reload, default to Element
             ///@tparam Args Construction argument types
             ///@param uniqueKey Key associated with the element to reload
             ///@param args Construction arguments
-            ///@return ElementPtr desired element
+            ///@return td::shared_ptr<ElementType> desired element
             ///
-            template<typename... Args>
-            ElementPtr       reload(const ElementKey &uniqueKey, Args&&... args)
+            template<typename ElementType = Element, typename... Args>
+            std::shared_ptr<ElementType>    reload(const ElementKey &uniqueKey, Args&&... args)
             {
-                forcePush(uniqueKey, std::make_shared<element>(args));
+                forcePush(uniqueKey, std::make_shared<ElementType>(args));
                 return _elements[uniqueKey];
             }
 
@@ -263,12 +264,14 @@ namespace Plug {
             ///
             /// Reloads the element associated with uniqueKey from the key itself
             ///
+            ///@tparam Element Element type to reload, default to Element
             ///@param uniqueKey Key associated with the element to reload
-            ///@return ElementPtr desired element
+            ///@return  std::shared_ptr<ElementType> desired element
             ///
-            ElementPtr       reload(const ElementKey &uniqueKey)
+            template<typename ElementType = Element>
+            std::shared_ptr<ElementType>    reload(const ElementKey &uniqueKey)
             {
-                forcePush(uniqueKey, std::make_shared<element>(uniqueKey));
+                forcePush(uniqueKey, std::make_shared<ElementType>(uniqueKey));
                 return _elements[uniqueKey];
             }
 
