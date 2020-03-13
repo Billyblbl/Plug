@@ -10,6 +10,7 @@
 
 ///@file
 
+#include <string>
 #include "static_string.hpp"
 
 #define STRINGYFY(str) #str
@@ -68,6 +69,11 @@ namespace Plug { namespace Modules {
         return MakeStaticStr(CreateObject) + "_" + name;
     }
 
+    decltype(auto)    CreateNamedObject(const std::string &name)
+    {
+        return std::string(CreateObject) + "_" + name;
+    }
+
     ///
     ///@brief Object module destructor function standard symbol string
     ///
@@ -78,6 +84,11 @@ namespace Plug { namespace Modules {
     constexpr decltype(auto)    DestroyNamedObject(static_string<size> name)
     {
         return MakeStaticStr(DestroyObject) + "_" + name;
+    }
+
+        decltype(auto)    DestroyNamedObject(const std::string &name)
+    {
+        return std::string(DestroyObject) + "_" + name;
     }
 
 }}

@@ -72,6 +72,8 @@ namespace Plug {
             ///
             ///@brief Construct a new Object Module
             ///
+            /// Construction using default obejct creator/destructor pair
+            ///
             ///@param path Path to the module's dynamic library file
             ///
             ObjectModule(const std::string &path):
@@ -80,6 +82,24 @@ namespace Plug {
                     std::make_unique<Object>(
                         _mod.callSymbol<ObjectCreator>(Modules::CreateObject),
                         _mod.getFctSymbol<ObjectDestructor>(Modules::DestroyObject)
+                    )
+                )
+            {}
+
+            ///
+            ///@brief Construct a new Object Module object
+            ///
+            /// Construction using creator/destructor pair associated with identifier
+            ///
+            ///@param path Path to the module's dynamic library file
+            ///@param identifier Identifier of the module object to load
+            ///
+            ObjectModule(const std::string &path, const std::string &identifier):
+                _mod(Modules::Raw().load(path))
+                _obj(
+                    std::make_unique<Object>(
+                        _mod.callSymbol<ObjectCreator>(Modules::CreateNamedObject(identifier)),
+                        _mod.getFctSymbol<ObjectDestructor>(Modules::DestroyNamedObject(identifer))
                     )
                 )
             {}
