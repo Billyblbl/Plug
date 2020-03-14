@@ -2,11 +2,11 @@
 ** EPITECH PROJECT, 2020
 ** Plug
 ** File description:
-** ObjectModule
+** ModuleObject
 */
 
-#ifndef OBJECTMODULE_HPP_
-#define OBJECTMODULE_HPP_
+#ifndef MODULEOBJECT_HPP_
+#define MODULEOBJECT_HPP_
 
 #include <memory>
 #include <functional>
@@ -24,7 +24,7 @@ namespace Plug {
     ///@tparam Interface Interface of the module model
     ///
     template<typename Interface>
-    class ObjectModule {
+    class ModuleObject {
         public:
 
             ///
@@ -61,13 +61,13 @@ namespace Plug {
             ///@brief Cache type for object module models
             ///
             ///
-            using CacheType = Cache<ObjectModule>;
+            using CacheType = Cache<ModuleObject>;
 
             ///
             ///@brief Construct a new Object Module
             ///
             ///
-            ObjectModule() = default;
+            ModuleObject() = default;
 
             ///
             ///@brief Construct a new Object Module
@@ -76,7 +76,7 @@ namespace Plug {
             ///
             ///@param path Path to the module's dynamic library file
             ///
-            ObjectModule(const std::string &path):
+            ModuleObject(const std::string &path):
                 _mod(Modules::Raw().load(path))
                 _obj(
                     std::make_unique<Object>(
@@ -94,7 +94,7 @@ namespace Plug {
             ///@param path Path to the module's dynamic library file
             ///@param identifier Identifier of the module object to load
             ///
-            ObjectModule(const std::string &path, const std::string &identifier):
+            ModuleObject(const std::string &path, const std::string &identifier):
                 _mod(Modules::Raw().load(path))
                 _obj(
                     std::make_unique<Object>(
@@ -108,7 +108,7 @@ namespace Plug {
             ///@brief Destroy the Object Module
             ///
             ///
-            ~ObjectModule() = default;
+            virtual ~ModuleObject() = default;
 
     		///
     		///@brief object dereferencer operator
@@ -177,7 +177,7 @@ namespace Plug {
     ///@tparam Interface interface of the object type managed by the cache
     ///
     template<typename Interface>
-    using ObjectCache = typename ObjectModule<Interface>::CacheType;
+    using ObjectCache = typename ModuleObject<Interface>::CacheType;
 
     namespace Modules {
 
@@ -189,7 +189,7 @@ namespace Plug {
         template<typename Interface>
         ObjectCache<Interface>  &Objects()
         {
-            static Cache<ObjectModule<Interface>>   objs;
+            static Cache<ModuleObject<Interface>>   objs;
             return objs;
         }
 
@@ -197,4 +197,4 @@ namespace Plug {
 
 }
 
-#endif /* !OBJECTMODULE_HPP_ */
+#endif /* !MODULEOBJECT_HPP_ */
