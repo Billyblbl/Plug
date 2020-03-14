@@ -66,13 +66,28 @@ namespace Plug {
             ///
             ///@brief Construct a new Object Module
             ///
+            /// Default constructor, construct empty module
             ///
             ModuleObject() = default;
 
             ///
+            ///@brief Construct a new Module Object object
+            ///
+            /// Copy constructor
+            ///
+            ModuleObject(const ModuleObject &) = default;
+
+            ///
+            ///@brief Construct a new Module Object object
+            ///
+            /// Move constructor
+            ///
+            ModuleObject(ModuleObject &&) = default;
+
+            ///
             ///@brief Construct a new Object Module
             ///
-            /// Construction using default obejct creator/destructor pair
+            /// Construction using default object creator/destructor pair
             ///
             ///@param path Path to the module's dynamic library file
             ///
@@ -109,6 +124,57 @@ namespace Plug {
             ///
             ///
             virtual ~ModuleObject() = default;
+
+            ///
+            ///@brief Loads a module object
+            ///
+            /// Construction module object using default object creator/destructor pair
+            ///
+            ///@param path Path to the module's dynamic library file
+            ///
+            void    load(const std::string &path)
+            {
+                _mod = Modules::Raw().load(path);
+                _obj = std::make_unique<Object>(
+                    _mod.callSymbol<ObjectCreator>(Modules::CreateObject),
+                    _mod.getFctSymbol<ObjectDestructor>(Modules::DestroyObject)
+                );
+            }
+
+            ///
+            ///@brief Loads a module object
+            ///
+            /// Construction using creator/destructor pair associated with identifier            
+            ///
+            ///@param path Path to the module's dynamic library file
+            ///@param identifier Identifier of the module object to load
+            ///
+            void    load(const std::string &path, const std::string &identifier)
+            {
+                _mod = Modules::Raw().load(path);
+                _obj = std::make_unique<Object>(
+                    _mod.callSymbol<ObjectCreator>(Modules::CreateNamedObject(identifier)),
+                    _mod.getFctSymbol<ObjectDestructor>(Modules::DestroyNamedObject(identifer))
+                );
+            }
+
+            ///
+            ///@brief Checks if the module object is loaded with an instance
+            ///
+            ///
+            bool    isLoaded() const
+            {
+                return _obj;
+            }
+
+            ///
+            ///@brief Bool conversion operator, effectively returns `this->isLoaded()`
+            ///
+            ///
+            operator bool() const
+            {
+                return isLoaded();
+            }
 
     		///
     		///@brief object dereferencer operator
@@ -189,7 +255,7 @@ namespace Plug {
         template<typename Interface>
         ObjectCache<Interface>  &Objects()
         {
-            static Cache<ModuleObject<Interface>>   objs;
+            static ObjectCache<Interface>   objs;
             return objs;
         }
 
