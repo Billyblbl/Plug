@@ -47,12 +47,17 @@ namespace Plug
 			///
 			///
 			~DynLib();
+
+			static constexpr auto	FileExtension = "dll";
 		#else
 			///
 			///@brief Destroy the Dyn Lib
 			///
 			///
 			~DynLib() = default;
+
+			static constexpr auto	FileExtension = "so";
+
 		#endif
 
 			///
